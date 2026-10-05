@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Premium barbering in Dubai Silicon Oasis. Book online in 30 seconds.">
+<meta name="keywords" content="barber, haircut, beard trim, Dubai Silicon Oasis">
+<title>BarberZ Guild | Dubai Silicon Oasis</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#c9a24b;--dark:#0f0f0f;--card:#1a1a1a;--text:#eaeaea}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,sans-serif;background:var(--dark);color:var(--text)}
+  header{display:flex;justify-content:space-between;align-items:center;padding:20px 6%;position:sticky;top:0;background:#0f0f0fe6;z-index:9}
+  .logo{font-family:'Bebas Neue';font-size:32px;color:var(--gold);letter-spacing:2px}
+  nav a{color:var(--text);margin-left:24px;text-decoration:none;font-size:14px}
+  .btn{background:var(--gold);color:#000;padding:14px 28px;border:none;border-radius:6px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+  .hero{height:85vh;display:flex;flex-direction:column;justify-content:center;padding:0 6%;
+    background:linear-gradient(90deg,#000d 40%,#0005),url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600') center/cover}
+  .hero h1{font-family:'Bebas Neue';font-size:clamp(48px,9vw,110px);line-height:.95}
+  .hero p{margin:20px 0 32px;max-width:480px;opacity:.85}
+  .stars{color:var(--gold);margin-bottom:12px}
+  section{padding:80px 6%}
+  h2{font-family:'Bebas Neue';font-size:48px;margin-bottom:32px;color:var(--gold)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+  .card{background:var(--card);padding:28px;border-radius:10px;border:1px solid #2a2a2a}
+  .card h3{margin-bottom:8px}.price{color:var(--gold);font-size:22px;font-weight:600;margin-top:12px}
+  form{background:var(--card);padding:32px;border-radius:10px;max-width:560px;display:grid;gap:16px}
+  label{font-size:13px;opacity:.7}
+  input,select{width:100%;padding:12px;background:#111;border:1px solid #333;color:var(--text);border-radius:6px;margin-top:6px}
+  .slots{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .slot{padding:8px 14px;border:1px solid #333;border-radius:6px;cursor:pointer;font-size:14px}
+  .slot.active{background:var(--gold);color:#000;border-color:var(--gold)}
+  .slot.disabled{opacity:0.4;cursor:not-allowed}
+  footer{padding:40px 6%;border-top:1px solid #222;font-size:14px;opacity:.7}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">BARBERZ GUILD</div>
+  <nav><a href="#services">Services</a><a href="#book">Book</a><a href="#visit">Visit</a><a href="admin.html">Bookings</a></nav>
+</header>
+
+<div class="hero">
+  <div class="stars">★★★★★ 4.8 from 130+ reviews</div>
+  <h1>SHARP CUTS.<br>NO WAITING.</h1>
+  <p>Premium barbering in the heart of Dubai Silicon Oasis. Book your chair in 30 seconds.</p>
+  <a href="#book" class="btn">Book Appointment</a>
+</div>
+
+<section id="services">
+  <h2>Services</h2>
+  <div class="grid">
+    <div class="card"><h3>Haircut</h3><p>Classic or modern, finished with styling.</p><div class="price">AED 50</div></div>
+    <div class="card"><h3>Beard Trim</h3><p>Shape, line-up and hot towel.</p><div class="price">AED 35</div></div>
+    <div class="card"><h3>Cut + Beard</h3><p>The full Guild treatment.</p><div class="price">AED 75</div></div>
+    <div class="card"><h3>Kids Cut</h3><p>Under 12, patient and quick.</p><div class="price">AED 40</div></div>
+  </div>
+</section>
+
+<section id="book">
+  <h2>Book Your Chair</h2>
+  <form id="bookingForm">
+    <div><label>Your Name</label><input id="name" required></div>
+    <div><label>Phone</label><input id="phone" type="tel" required></div>
+    <div><label>Service</label>
+      <select id="service"><option>Haircut - AED 50</option><option>Beard Trim - AED 35</option><option>Cut + Beard - AED 75</option><option>Kids Cut - AED 40</option></select></div>
+    <div><label>Date</label><input id="date" type="date" required></div>
+    <div><label>Time</label><div class="slots" id="slots"></div></div>
+    <button class="btn" type="submit">Confirm via WhatsApp</button>
+  </form>
+</section>
+
+<section id="visit">
+  <h2>Visit Us</h2>
+  <p>Shop #4, Binghatti Sapphires, Dubai Silicon Oasis<br>Open daily · +971 52 116 9619</p>
+</section>
+
+<footer>© BarberZ Guild · Premium Barbering</footer>
+
+<script>
+  const times = ["10:00","11:00","12:00","13:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00"];
+  let picked = "";
+
+  const BOOKING_KEY = "barberzGuildBookings";
+
+  function getBookings() {
+    return JSON.parse(localStorage.getItem(BOOKING_KEY) || "[]");
+  }
+
+  function saveBookings(bookings) {
+    localStorage.setItem(BOOKING_KEY, JSON.stringify(bookings));
+  }
+
+  function getBookedTimes(date) {
+    const bookings = getBookings();
+    return bookings
+      .filter(b => b.date === date)
+      .map(b => b.time);
+  }
+
+  const box = document.getElementById("slots");
+
+  times.forEach(t => {
+    const s = document.createElement("div");
+    s.className = "slot";
+    s.textContent = t;
+
+    const selectedDate = document.getElementById("date").value;
+
+    const updateSlotState = () => {
+      const booked = getBookedTimes(document.getElementById("date").value || "");
+      s.classList.toggle("disabled", booked.includes(t));
+      if (booked.includes(t)) {
+        s.style.opacity = "0.4";
+        s.style.pointerEvents = "none";
+      } else {
+        s.style.opacity = "1";
+        s.style.pointerEvents = "auto";
+      }
+    };
+
+    s.onclick = () => {
+      const booked = getBookedTimes(document.getElementById("date").value || "");
+      if (booked.includes(t)) return;
+      document.querySelectorAll(".slot").forEach(x => x.classList.remove("active"));
+      s.classList.add("active");
+      picked = t;
+    };
+
+    document.getElementById("date").addEventListener("change", updateSlotState);
+
+    box.appendChild(s);
+  });
+
+  document.getElementById("date").min = new Date().toISOString().split("T")[0];
+  document.getElementById("bookingForm").onsubmit = e => {
+    e.preventDefault();
+    if (!picked) {
+      alert("Pick a time slot");
+      return;
+    }
+
+    const name = document.getElementById("name").value;
+    const phone = document.getElementById("phone").value;
+    const service = document.getElementById("service").value;
+    const date = document.getElementById("date").value;
+
+    const booking = {
+      name,
+      phone,
+      service,
+      date,
+      time: picked
+    };
+
+    const bookings = getBookings();
+    bookings.push(booking);
+    saveBookings(bookings);
+
+    const msg =
+      `New booking:%0AName: ${name}%0APhone: ${phone}%0AService: ${service}%0ADate: ${date}%0ATime: ${picked}`;
+
+    window.open(`https://wa.me/971521169619?text=${msg}`, "_blank");
+    alert("Booking saved. Your WhatsApp message is ready.");
+  };
+</script>
+</body>
+</html>
